@@ -1,0 +1,6 @@
+lamoda_enum:
+  dbal_types:
+    test_enum: Lamoda\EnumBundle\Tests\Functional\Fixtures\TestEnum
+    test_enum_extended:
+        class: Lamoda\EnumBundle\Tests\Functional\Fixtures\TestEnum
+        strategy: lowercase
