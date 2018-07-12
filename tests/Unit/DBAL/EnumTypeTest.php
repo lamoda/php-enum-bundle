@@ -25,7 +25,7 @@ final class EnumTypeTest extends TestCase
      * @param string $value
      * @param TestEnum $expectedStatus
      */
-    public function testConvertToPHPValue(string $value, TestEnum $expectedStatus): void
+    public function testConvertToPHPValue(?string $value, ?TestEnum $expectedStatus): void
     {
         $actualValue = self::createType()->convertToPHPValue($value, $this->createPlatformMock());
 
@@ -38,7 +38,7 @@ final class EnumTypeTest extends TestCase
      * @param string $expectedStatus
      * @param TestEnum $status
      */
-    public function testConvertToDatabaseValue(string $expectedStatus, TestEnum $status): void
+    public function testConvertToDatabaseValue(?string $expectedStatus, ?TestEnum $status): void
     {
         $actualValue = self::createType()->convertToDatabaseValue($status, $this->createPlatformMock());
 
@@ -50,6 +50,7 @@ final class EnumTypeTest extends TestCase
         return [
             ['ONE', TestEnum::ONE()],
             ['TWO', TestEnum::TWO()],
+            [null, null],
         ];
     }
 

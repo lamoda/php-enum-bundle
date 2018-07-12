@@ -48,6 +48,10 @@ final class EnumType extends Type
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
+        if (null === $value) {
+            return null;
+        }
+
         /** @var Enum $fqcn */
         $fqcn = $this->fqcn;
 
@@ -63,6 +67,10 @@ final class EnumType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
+        if (null === $value) {
+            return null;
+        }
+
         if (!is_a($value, $this->fqcn)) {
             throw ConversionException::conversionFailed($value, $this->getName());
         }
