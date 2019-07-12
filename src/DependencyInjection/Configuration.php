@@ -15,6 +15,9 @@ final class Configuration implements ConfigurationInterface
 
         $root = $builder->root('lamoda_enum');
 
+        $root->children()->booleanNode('enum_name_type_mapping')
+            ->defaultValue(false);
+
         $this->configureEnumNodes($root);
 
         return $builder;

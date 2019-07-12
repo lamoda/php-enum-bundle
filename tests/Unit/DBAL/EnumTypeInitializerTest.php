@@ -19,6 +19,15 @@ final class EnumTypeInitializerTest extends TestCase
 {
     private const TESTED_TYPE = 'test_type';
 
+    protected function setUp(): void
+    {
+        $typeReflectionClass = new \ReflectionClass(Type::class);
+
+        $typesMapProperty = $typeReflectionClass->getProperty('_typesMap');
+        $typesMapProperty->setAccessible(true);
+        $typesMapProperty->setValue([]);
+    }
+
     public function testInitializerLoadsType(): void
     {
         $initalizer = new EnumTypeInitializer();
@@ -31,6 +40,47 @@ final class EnumTypeInitializerTest extends TestCase
         $enum = $type->convertToPHPValue('ONE', $this->createMock(AbstractPlatform::class));
         self::assertInstanceOf(TestEnum::class, $enum);
         self::assertEquals('ONE', (string) $enum);
+    }
+
+    /**
+     * @param bool   $enumNameTypeMapping
+     * @param string $expectedType
+     * @param array  $expectedMappedTypes
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     *
+     * @dataProvider dataInitializerLoadsTypeWithMappingFlag
+     */
+    public function testInitializerLoadsTypeWithMappingFlag(
+        bool $enumNameTypeMapping,
+        string $expectedType,
+        array $expectedMappedTypes
+    ): void {
+        $initalizer = new EnumTypeInitializer();
+        $initalizer->initialize(
+            self::TESTED_TYPE,
+            TestEnum::class,
+            new IdenticalNamingStrategy(),
+            $enumNameTypeMapping
+        );
+
+        $platform = $this->createMock(AbstractPlatform::class);
+        $platform->method('getVarcharTypeDeclarationSQL')
+            ->willReturn('VARCHAR(255)');
+
+        $type = Type::getType(self::TESTED_TYPE);
+
+        self::assertEquals($enumNameTypeMapping, $type->isEnumNameTypeMapping());
+        self::assertEquals($expectedType, $type->getSQLDeclaration([], $platform));
+        self::assertEquals($expectedMappedTypes, $type->getMappedDatabaseTypes($platform));
+    }
+
+    public function dataInitializerLoadsTypeWithMappingFlag()
+    {
+        return [
+            [false, 'VARCHAR(255)', [self::TESTED_TYPE => 'string']],
+            [true, self::TESTED_TYPE, [self::TESTED_TYPE => self::TESTED_TYPE]]
+        ];
     }
 
     /**

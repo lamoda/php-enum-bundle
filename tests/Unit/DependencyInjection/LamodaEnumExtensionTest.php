@@ -38,6 +38,7 @@ final class LamodaEnumExtensionTest extends TestCase
         $extension->load(
             [
                 [
+                    'enum_name_type_mapping' => true,
                     'dbal_types' => [
                         'type_1' => TestEnum::class,
                         'type_2' => [
@@ -52,10 +53,12 @@ final class LamodaEnumExtensionTest extends TestCase
 
         $initDef = $builder->getDefinition(EnumTypeInitializer::class);
         $calls = $initDef->getMethodCalls();
+
         self::assertCount(2, $calls);
         self::assertSame('initialize', $calls[0][0]);
         self::assertSame('type_1', $calls[0][1][0]);
         self::assertSame(TestEnum::class, $calls[0][1][1]);
+        self::assertSame(true, $calls[0][1][3]);
         /** @var Reference $strat1 */
         $strat1 = $calls[0][1][2];
         self::assertInstanceOf(Reference::class, $strat1);
@@ -64,6 +67,7 @@ final class LamodaEnumExtensionTest extends TestCase
         self::assertSame('initialize', $calls[1][0]);
         self::assertSame('type_2', $calls[1][1][0]);
         self::assertSame(TestEnum::class, $calls[1][1][1]);
+        self::assertSame(true, $calls[1][1][3]);
         /** @var Reference $strat1 */
         $strat1 = $calls[1][1][2];
         self::assertInstanceOf(Reference::class, $strat1);

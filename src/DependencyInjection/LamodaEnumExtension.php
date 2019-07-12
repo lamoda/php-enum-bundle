@@ -2,6 +2,7 @@
 
 namespace Lamoda\EnumBundle\DependencyInjection;
 
+use Doctrine\ORM\EntityManager;
 use Lamoda\EnumBundle\DBAL\EnumTypeInitializer;
 use Lamoda\EnumBundle\Naming\IdenticalNamingStrategy;
 use Lamoda\EnumBundle\Naming\LowercaseNamingStrategy;
@@ -25,7 +26,7 @@ final class LamodaEnumExtension extends Extension
         foreach ($configs['dbal_types'] ?? [] as $name => $typeConfig) {
             $fqcn = $typeConfig['class'];
             $strategy = $this->getStrategy($typeConfig['strategy'] ?? null);
-            $typeInitializer->addMethodCall('initialize', [$name, $fqcn, $strategy]);
+            $typeInitializer->addMethodCall('initialize', [$name, $fqcn, $strategy, $configs['enum_name_type_mapping']]);
         }
     }
 
