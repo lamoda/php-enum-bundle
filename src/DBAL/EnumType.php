@@ -12,12 +12,19 @@ use Paillechat\Enum\Exception\EnumException;
 
 final class EnumType extends Type
 {
+    private const MAPPED_TYPE_STRING = 'string';
+
     /** @var string */
     private $fqcn;
+
     /** @var string */
     private $name;
+
     /** @var NamingStrategyInterface */
     private $strategy;
+
+    /** @var bool */
+    private $enumNameTypeMapping = false;
 
     public function setName(string $name): void
     {
@@ -41,6 +48,16 @@ final class EnumType extends Type
         }
 
         return $this->strategy;
+    }
+
+    public function setEnumNameTypeMapping(bool $enumNameTypeMapping): void
+    {
+        $this->enumNameTypeMapping = $enumNameTypeMapping;
+    }
+
+    public function isEnumNameTypeMapping(): bool
+    {
+        return $this->enumNameTypeMapping;
     }
 
     /**
@@ -81,6 +98,10 @@ final class EnumType extends Type
     /** {@inheritdoc} */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
+        if ($this->isEnumNameTypeMapping() === true) {
+            return $this->getName();
+        }
+
         return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
     }
 
@@ -88,5 +109,14 @@ final class EnumType extends Type
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getMappedDatabaseTypes(AbstractPlatform $platform)
+    {
+        if ($this->isEnumNameTypeMapping() === true) {
+            return [$this->name => $this->name];
+        }
+
+        return [$this->name => self::MAPPED_TYPE_STRING];
     }
 }
