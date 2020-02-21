@@ -4,6 +4,7 @@ namespace Lamoda\EnumBundle\Tests\Unit\DBAL;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\TypeRegistry;
 use Lamoda\EnumBundle\DBAL\EnumType;
 use Lamoda\EnumBundle\DBAL\EnumTypeInitializer;
 use Lamoda\EnumBundle\Naming\IdenticalNamingStrategy;
@@ -23,9 +24,16 @@ final class EnumTypeInitializerTest extends TestCase
     {
         $typeReflectionClass = new \ReflectionClass(Type::class);
 
-        $typesMapProperty = $typeReflectionClass->getProperty('_typesMap');
-        $typesMapProperty->setAccessible(true);
-        $typesMapProperty->setValue([]);
+        if ($typeReflectionClass->hasProperty('_typesMap')) {
+            $typesMapProperty = $typeReflectionClass->getProperty('_typesMap');
+            $typesMapProperty->setAccessible(true);
+            $typesMapProperty->setValue([]);
+        } else {
+            $registry = new TypeRegistry();
+            $typesMapProperty = $typeReflectionClass->getProperty('typeRegistry');
+            $typesMapProperty->setAccessible(true);
+            $typesMapProperty->setValue($registry);
+        }
     }
 
     public function testInitializerLoadsType(): void
