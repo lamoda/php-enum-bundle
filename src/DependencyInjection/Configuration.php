@@ -11,9 +11,14 @@ final class Configuration implements ConfigurationInterface
     /** {@inheritdoc} */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $builder = new TreeBuilder();
-
-        $root = $builder->root('lamoda_enum');
+        $name = 'lamoda_enum';
+        if (method_exists(TreeBuilder::class, 'root')) {
+            $builder = new TreeBuilder();
+            $root = $builder->root($name);
+        } else {
+            $builder = new TreeBuilder($name);
+            $root = $builder->getRootNode();
+        }
 
         $root->children()->booleanNode('enum_name_type_mapping')
             ->defaultValue(false);

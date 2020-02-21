@@ -19,6 +19,8 @@ matrix:
     env: PACKAGES='symfony/symfony=4.0.*'
   - php: 7.1
     env: PACKAGES='symfony/symfony=4.1.*'
+  - php: 7.3
+    env: PACKAGES='symfony/symfony=5.* doctrine/dbal=2.10'
 
 before_install:
   - travis_retry composer self-update
