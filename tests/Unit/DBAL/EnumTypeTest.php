@@ -3,6 +3,7 @@
 namespace Lamoda\EnumBundle\Tests\Unit\DBAL;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Lamoda\EnumBundle\DBAL\EnumType;
 use Lamoda\EnumBundle\Naming\LowercaseNamingStrategy;
@@ -54,19 +55,15 @@ final class EnumTypeTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \Doctrine\DBAL\Types\ConversionException
-     */
     public function testConvertToPHPValueInvalidValue(): void
     {
+        $this->expectException(ConversionException::class);
         self::createType()->convertToPHPValue('UNKNOWN', $this->createPlatformMock());
     }
 
-    /**
-     * @expectedException \Doctrine\DBAL\Types\ConversionException
-     */
     public function testConvertToDataBaseValueInvalidValue(): void
     {
+        $this->expectException(ConversionException::class);
         self::createType()->convertToDatabaseValue(OtherEnum::BAR(), $this->createPlatformMock());
     }
 
