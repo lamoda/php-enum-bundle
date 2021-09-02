@@ -8,6 +8,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class Configuration implements ConfigurationInterface
 {
+    private const STRATEGIES = [
+        'identical',
+        'lowercase',
+    ];
+
     /** {@inheritdoc} */
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -20,8 +25,16 @@ final class Configuration implements ConfigurationInterface
             $root = $builder->getRootNode();
         }
 
-        $root->children()->booleanNode('enum_name_type_mapping')
-            ->defaultValue(false);
+        $root
+            ->children()
+                ->booleanNode('enum_name_type_mapping')
+                    ->defaultValue(false)
+                ->end()
+                ->enumNode('default_strategy')
+                    ->values(self::STRATEGIES)
+                    ->defaultValue(self::STRATEGIES[0])
+                ->end()
+            ->end();
 
         $this->configureEnumNodes($root);
 
@@ -44,18 +57,14 @@ final class Configuration implements ConfigurationInterface
             )
             ->end();
         $dbalTypeProto
-            ->children()->scalarNode('class')
-            ->isRequired()
-            ->example('My\Enum');
-        $dbalTypeProto
-            ->children()->enumNode('strategy')
-            ->values(
-                [
-                    'lowercase',
-                    'identical'
-                ]
-            )
-            ->defaultValue('identical')
-        ;
+            ->children()
+                ->scalarNode('class')
+                    ->isRequired()
+                    ->example('My\Enum')
+                ->end()
+                ->enumNode('strategy')
+                    ->values(self::STRATEGIES)
+                ->end()
+            ->end();
     }
 }

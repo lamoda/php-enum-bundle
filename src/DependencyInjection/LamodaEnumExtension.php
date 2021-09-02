@@ -25,7 +25,7 @@ final class LamodaEnumExtension extends Extension
 
         foreach ($configs['dbal_types'] ?? [] as $name => $typeConfig) {
             $fqcn = $typeConfig['class'];
-            $strategy = $this->getStrategy($typeConfig['strategy'] ?? null);
+            $strategy = $this->getStrategy($typeConfig['strategy'] ?? $configs['default_strategy']);
             $typeInitializer->addMethodCall('initialize', [$name, $fqcn, $strategy, $configs['enum_name_type_mapping']]);
         }
     }
