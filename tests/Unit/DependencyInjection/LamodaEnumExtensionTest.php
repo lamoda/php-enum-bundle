@@ -73,4 +73,74 @@ final class LamodaEnumExtensionTest extends TestCase
         self::assertInstanceOf(Reference::class, $strat1);
         self::assertSame(LowercaseNamingStrategy::class, (string) $strat1);
     }
+
+    public function testExtensionLoadsConfigsWithDefaultStrategy(): void
+    {
+        $builder = new ContainerBuilder();
+        $extension = new LamodaEnumExtension();
+
+        $extension->load(
+            [
+                [
+                    'enum_name_type_mapping' => true,
+                    'default_strategy' => 'lowercase',
+                    'dbal_types' => [
+                        'type_1' => TestEnum::class,
+                        'type_2' => [
+                            'class' => TestEnum::class,
+                            'strategy' => 'identical',
+                        ],
+                    ],
+                ],
+            ],
+            $builder
+        );
+
+        $initDef = $builder->getDefinition(EnumTypeInitializer::class);
+        $calls = $initDef->getMethodCalls();
+
+        /** @var Reference $strat1 */
+        $strat1 = $calls[0][1][2];
+        self::assertInstanceOf(Reference::class, $strat1);
+        self::assertSame(LowercaseNamingStrategy::class, (string) $strat1);
+
+        /** @var Reference $strat1 */
+        $strat1 = $calls[1][1][2];
+        self::assertInstanceOf(Reference::class, $strat1);
+        self::assertSame(IdenticalNamingStrategy::class, (string) $strat1);
+    }
+
+    public function testExtensionLoadsConfigsWithoutStrategies(): void
+    {
+        $builder = new ContainerBuilder();
+        $extension = new LamodaEnumExtension();
+
+        $extension->load(
+            [
+                [
+                    'enum_name_type_mapping' => true,
+                    'dbal_types' => [
+                        'type_1' => TestEnum::class,
+                        'type_2' => [
+                            'class' => TestEnum::class,
+                        ],
+                    ],
+                ],
+            ],
+            $builder
+        );
+
+        $initDef = $builder->getDefinition(EnumTypeInitializer::class);
+        $calls = $initDef->getMethodCalls();
+
+        /** @var Reference $strat1 */
+        $strat1 = $calls[0][1][2];
+        self::assertInstanceOf(Reference::class, $strat1);
+        self::assertSame(IdenticalNamingStrategy::class, (string)$strat1);
+
+        /** @var Reference $strat1 */
+        $strat1 = $calls[1][1][2];
+        self::assertInstanceOf(Reference::class, $strat1);
+        self::assertSame(IdenticalNamingStrategy::class, (string)$strat1);
+    }
 }
