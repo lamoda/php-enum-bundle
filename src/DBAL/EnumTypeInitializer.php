@@ -13,7 +13,7 @@ final class EnumTypeInitializer
      * @param NamingStrategyInterface|null $strategy
      * @param bool $enumNameTypeMapping
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function initialize(
         string $type,

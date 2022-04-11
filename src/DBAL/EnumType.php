@@ -63,7 +63,7 @@ final class EnumType extends Type
     /**
      * {@inheritdoc}
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Enum
     {
         if (null === $value) {
             return null;
@@ -82,7 +82,7 @@ final class EnumType extends Type
     /**
      * {@inheritdoc}
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (null === $value) {
             return null;
@@ -96,7 +96,7 @@ final class EnumType extends Type
     }
 
     /** {@inheritdoc} */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
     {
         if ($this->isEnumNameTypeMapping() === true) {
             return $this->getName();
@@ -111,7 +111,7 @@ final class EnumType extends Type
         return $this->name;
     }
 
-    public function getMappedDatabaseTypes(AbstractPlatform $platform)
+    public function getMappedDatabaseTypes(AbstractPlatform $platform): array
     {
         if ($this->isEnumNameTypeMapping() === true) {
             return [$this->name => $this->name];
