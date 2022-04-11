@@ -74,7 +74,9 @@ final class EnumTypeTest extends TestCase
         $platform = $this->createMock(AbstractPlatform::class);
         $platform->expects($this->once())
             ->method('getVarcharTypeDeclarationSQL')
-            ->with($fieldDeclaration);
+            ->with($fieldDeclaration)
+            ->willReturn('VARCHAR')
+        ;
 
         self::createType()->getSQLDeclaration($fieldDeclaration, $platform);
     }
